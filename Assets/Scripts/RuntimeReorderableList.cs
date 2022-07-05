@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 
@@ -18,6 +19,8 @@ public class RuntimeReorderableList : MonoBehaviour
     public RectTransform ElementObject;
 
     public RectTransform ContentsPanel;
+
+    public Scrollbar VerticalScrollbar;
 
     public bool add = false;
     public bool remove = false;
@@ -43,6 +46,7 @@ public class RuntimeReorderableList : MonoBehaviour
         elements = new ObservableCollection<object>();
         elementTransforms = new Dictionary<object, RectTransform>();
         elements.CollectionChanged += OnListChanged;
+        VerticalScrollbar.onValueChanged.AddListener(OnScrollChanged);
     }
 
     public void OnListChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -63,6 +67,7 @@ public class RuntimeReorderableList : MonoBehaviour
                     Destroy(removeTarget.gameObject);
                 }
                 ReorderElementObjects();
+                Debug.Log(ContentsPanel.rect.max);
                 break;
             case NotifyCollectionChangedAction.Replace :
                 break;
@@ -70,6 +75,14 @@ public class RuntimeReorderableList : MonoBehaviour
                 break;
         }
         UpdatePanelScale();
+        UpdateScrollSize();
+    }
+
+    public void OnScrollChanged(float value)
+    {
+        var pos = ContentsPanel.anchoredPosition;
+        pos.y = (ContentsPanel.sizeDelta.y - ((RectTransform)transform).sizeDelta.y) * value;
+        ContentsPanel.anchoredPosition = pos;
     }
 
     public void ReorderElementObjects()
@@ -91,6 +104,8 @@ public class RuntimeReorderableList : MonoBehaviour
     }
 
     public void UpdatePanelScale() => ContentsPanel.sizeDelta = new Vector2(ContentsPanel.sizeDelta.x, ListLastPos);
+
+    public void UpdateScrollSize() => VerticalScrollbar.size = ((RectTransform) transform).sizeDelta.y / ContentsPanel.sizeDelta.y;
 
     public float ListLastPos { get => ElementObject.sizeDelta.y * elements.Count - 1; }
 }
