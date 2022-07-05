@@ -61,8 +61,8 @@ public class RuntimeReorderableList : MonoBehaviour
                     var removeTarget = elementTransforms[item];
                     elementTransforms.Remove(item);
                     Destroy(removeTarget.gameObject);
-                    ReorderElementObjects();
                 }
+                ReorderElementObjects();
                 break;
             case NotifyCollectionChangedAction.Replace :
                 break;
@@ -77,7 +77,7 @@ public class RuntimeReorderableList : MonoBehaviour
         var i = 0;
         foreach (var element in elements)
         {
-            elementTransforms[element].anchoredPosition = new Vector2(0, ElementObject.sizeDelta.y - i * ElementObject.sizeDelta.y);
+            elementTransforms[element].anchoredPosition = new Vector2(0, -ElementObject.sizeDelta.y * i);
             i++;
         }
     }
