@@ -90,7 +90,7 @@ public class RuntimeReorderableList : MonoBehaviour
         return Element;
     }
 
-    public void UpdatePanelScale() => ContentsPanel.sizeDelta = new Vector2(0, ListLastPos);
+    public void UpdatePanelScale() => ContentsPanel.sizeDelta = new Vector2(ContentsPanel.sizeDelta.x, ListLastPos);
 
     public float ListLastPos { get => ElementObject.sizeDelta.y * elements.Count - 1; }
 }
