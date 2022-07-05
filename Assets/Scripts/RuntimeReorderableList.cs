@@ -20,6 +20,7 @@ public class RuntimeReorderableList : MonoBehaviour
     public RectTransform ContentsPanel;
 
     public bool add = false;
+    public bool remove = false;
 
     public void Update()
     {
@@ -28,6 +29,12 @@ public class RuntimeReorderableList : MonoBehaviour
             add = false;
             if(elements != null) elements.Add(Random.value);
             else elements = new ObservableCollection<object>() { Random.value };
+        }
+
+        if (remove)
+        {
+            remove = false;
+            if(elements != null) elements.RemoveAt(0);
         }
     }
 
@@ -49,9 +56,12 @@ public class RuntimeReorderableList : MonoBehaviour
                 }
                 break;
             case NotifyCollectionChangedAction.Remove :
-                foreach (var item in args.NewItems)
+                foreach (var item in args.OldItems)
                 {
+                    var removeTarget = elementTransforms[item];
                     elementTransforms.Remove(item);
+                    Destroy(removeTarget.gameObject);
+                    ReorderElementObjects();
                 }
                 break;
             case NotifyCollectionChangedAction.Replace :
@@ -61,6 +71,17 @@ public class RuntimeReorderableList : MonoBehaviour
         }
         UpdatePanelScale();
     }
+
+    public void ReorderElementObjects()
+    {
+        var i = 0;
+        foreach (var element in elements)
+        {
+            elementTransforms[element].anchoredPosition = new Vector2(0, ElementObject.sizeDelta.y - i * ElementObject.sizeDelta.y);
+            i++;
+        }
+    }
+    
 
     public RectTransform SpawnElement()
     {
