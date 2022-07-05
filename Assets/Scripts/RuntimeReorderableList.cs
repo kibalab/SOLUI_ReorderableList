@@ -67,11 +67,13 @@ public class RuntimeReorderableList : MonoBehaviour
                     Destroy(removeTarget.gameObject);
                 }
                 ReorderElementObjects();
-                Debug.Log(ContentsPanel.rect.max);
                 break;
             case NotifyCollectionChangedAction.Replace :
                 break;
             case NotifyCollectionChangedAction.Reset :
+                foreach (var item in elementTransforms)
+                    Destroy(item.Value.gameObject);
+                elementTransforms.Clear();
                 break;
         }
         UpdatePanelScale();
