@@ -12,7 +12,7 @@ using Random = UnityEngine.Random;
 [ExecuteAlways]
 public class RuntimeReorderableList : MonoBehaviour
 {
-    private ObservableCollection<object> elements;
+    public ObservableCollection<object> elements;
 
     private Dictionary<object, RectTransform> elementTransforms;
 
