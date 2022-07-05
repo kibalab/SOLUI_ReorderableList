@@ -39,6 +39,9 @@ public class RuntimeReorderableList : MonoBehaviour
             remove = false;
             if(elements != null) elements.RemoveAt(0);
         }
+
+        VerticalScrollbar.size = GetPanelScale();
+        VerticalScrollbar.value = GetPanelPosDelta();
     }
 
     private void Start()
@@ -113,11 +116,15 @@ public class RuntimeReorderableList : MonoBehaviour
     
 
     public RectTransform SpawnElement()
-    {
+    { 
         var Element = Instantiate(ElementObject, ContentsPanel);
         Element.anchoredPosition = new Vector2(0,ElementObject.sizeDelta.y-ListLastPos);
         return Element;
     }
+
+    public float GetPanelScale() => 1 - (ContentsPanel.sizeDelta.y - ((RectTransform) transform).sizeDelta.y) /  ContentsPanel.sizeDelta.y;
+
+    public float GetPanelPosDelta() => ContentsPanel.anchoredPosition.y / (ContentsPanel.sizeDelta.y - ((RectTransform) transform).sizeDelta.y);
 
     public void UpdatePanelScale() => ContentsPanel.sizeDelta = new Vector2(ContentsPanel.sizeDelta.x, ListLastPos);
 
