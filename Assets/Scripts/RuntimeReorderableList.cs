@@ -69,6 +69,7 @@ public class RuntimeReorderableList : MonoBehaviour
                 ReorderElementObjects();
                 break;
             case NotifyCollectionChangedAction.Replace :
+                ReorderElementObjects();
                 break;
             case NotifyCollectionChangedAction.Reset :
                 foreach (var item in elementTransforms)
