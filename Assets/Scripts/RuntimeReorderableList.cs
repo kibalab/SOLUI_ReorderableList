@@ -5,26 +5,34 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 
 [ExecuteAlways]
-public class RuntimeReorderableList : MonoBehaviour
+public class RuntimeReorderableList : UIBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public ObservableCollection<object> elements;
 
     private Dictionary<object, RectTransform> elementTransforms;
 
+    
     public RectTransform ElementObject;
 
     public RectTransform ContentsPanel;
 
     public Scrollbar VerticalScrollbar;
 
+    public float ScrollSensitivity = 0.1f;
+    
+    public float ScrollElastic = 2;
+    
+    public bool mouse_over = false;
+
     public bool add = false;
     public bool remove = false;
-
+    
     public void Update()
     {
         if (add)
@@ -41,13 +49,20 @@ public class RuntimeReorderableList : MonoBehaviour
         }
 
         VerticalScrollbar.size = GetPanelScale();
-        VerticalScrollbar.value = GetPanelPosDelta();
+        VerticalScrollbar.value = GetPanelPosDelta() + (mouse_over ? -Input.mouseScrollDelta.y * ScrollSensitivity : 0);
+
+        if (VerticalScrollbar.value > 1)
+            VerticalScrollbar.value = Mathf.Lerp(VerticalScrollbar.value, 1, Time.deltaTime * ScrollElastic);
+        else if (VerticalScrollbar.value < 0)
+            VerticalScrollbar.value = Mathf.Lerp(VerticalScrollbar.value, 0, Time.deltaTime * ScrollElastic);
 
         VerticalScrollbar.gameObject.SetActive(VerticalScrollbar.size != 1);
+
     }
 
     private void Start()
     {
+        
         elements = new ObservableCollection<object>();
         elementTransforms = new Dictionary<object, RectTransform>();
         elements.CollectionChanged += OnListChanged;
@@ -116,6 +131,15 @@ public class RuntimeReorderableList : MonoBehaviour
         }
     }
     
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        mouse_over = !eventData.hovered.Contains(gameObject);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        mouse_over = !eventData.hovered.Contains(gameObject);
+    }
 
     public RectTransform SpawnElement()
     { 
