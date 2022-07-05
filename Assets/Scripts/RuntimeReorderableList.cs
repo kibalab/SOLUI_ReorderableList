@@ -69,6 +69,16 @@ public class RuntimeReorderableList : MonoBehaviour
                 ReorderElementObjects();
                 break;
             case NotifyCollectionChangedAction.Replace :
+                foreach (var item in args.OldItems)
+                {
+                    var removeTarget = elementTransforms[item];
+                    elementTransforms.Remove(item);
+                    Destroy(removeTarget.gameObject);
+                }
+                foreach (var item in args.NewItems)
+                {
+                    elementTransforms.Add(item, SpawnElement());
+                }
                 ReorderElementObjects();
                 break;
             case NotifyCollectionChangedAction.Reset :
