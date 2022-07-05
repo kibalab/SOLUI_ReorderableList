@@ -42,6 +42,8 @@ public class RuntimeReorderableList : MonoBehaviour
 
         VerticalScrollbar.size = GetPanelScale();
         VerticalScrollbar.value = GetPanelPosDelta();
+
+        VerticalScrollbar.gameObject.SetActive(VerticalScrollbar.size != 1);
     }
 
     private void Start()
