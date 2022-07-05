@@ -65,7 +65,7 @@ public class RuntimeReorderableList : MonoBehaviour
     public RectTransform SpawnElement()
     {
         var Element = Instantiate(ElementObject, ContentsPanel);
-        Element.anchoredPosition = new Vector2(0,-ListLastPos);
+        Element.anchoredPosition = new Vector2(0,ElementObject.sizeDelta.y-ListLastPos);
         return Element;
     }
 
