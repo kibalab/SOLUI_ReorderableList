@@ -28,13 +28,16 @@ public class ElementMover : UIBehaviour, IPointerDownHandler, IPointerUpHandler
         isSelected = true;
         var draggedTarget = eventData.position;
         _dragOffset = ElementRoot.position - Input.mousePosition;
+        
+        ElementRoot.SetAsLastSibling();
     }
 
     private void Update()
     {
         if (isSelected)
         {
-            ElementRoot.position = (Vector2)Input.mousePosition + _dragOffset;
+            ElementRoot.position = ((Vector2)Input.mousePosition + _dragOffset);
+            ElementRoot.anchoredPosition *= new Vector2(ListRoot.FixX ? 0 : 1, 1);
             var newIndex = GetTargetIndex();
             ListRoot.DrawMoverLine(true, newIndex);
         }

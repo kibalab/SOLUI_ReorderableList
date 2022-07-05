@@ -33,6 +33,8 @@ public class RuntimeReorderableList : UIBehaviour, IPointerEnterHandler, IPointe
     
     public bool mouse_over = false;
 
+    public bool FixX = false;
+
     public bool add = false;
     public bool remove = false;
     
@@ -158,8 +160,8 @@ public class RuntimeReorderableList : UIBehaviour, IPointerEnterHandler, IPointe
         MoveerLine.gameObject.SetActive(b);
         if (!b) return;
         
-        MoveerLine.anchoredPosition = new Vector2(0, -ElementObject.sizeDelta.y * targetIndex);
-        MoveerLine.SetAsLastSibling();
+        MoveerLine.anchoredPosition = new Vector2(0, -ElementObject.sizeDelta.y *Math.Clamp(targetIndex, 0, elements.Count - 1));
+        MoveerLine.SetSiblingIndex(MoveerLine.parent.childCount - 2);
     }
 
     public float GetPanelScale() => 1 - (ContentsPanel.sizeDelta.y - ((RectTransform) transform).sizeDelta.y) /  ContentsPanel.sizeDelta.y;
