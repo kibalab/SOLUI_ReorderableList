@@ -86,6 +86,9 @@ public class RuntimeReorderableList : MonoBehaviour
                     Destroy(item.Value.gameObject);
                 elementTransforms.Clear();
                 break;
+            case NotifyCollectionChangedAction.Move :
+                ReorderElementObjects();
+                break;
         }
         UpdatePanelScale();
         UpdateScrollSize();
