@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -15,12 +16,14 @@ public class RuntimeReorderableList : UIBehaviour, IPointerEnterHandler, IPointe
 {
     public ObservableCollection<object> elements;
 
-    private Dictionary<object, RectTransform> elementTransforms;
+    public Dictionary<object, RectTransform> elementTransforms;
 
     
     public RectTransform ElementObject;
 
     public RectTransform ContentsPanel;
+
+    public RectTransform MoveerLine;
 
     public Scrollbar VerticalScrollbar;
 
@@ -76,7 +79,7 @@ public class RuntimeReorderableList : UIBehaviour, IPointerEnterHandler, IPointe
             case NotifyCollectionChangedAction.Add :
                 foreach (var item in args.NewItems)
                 {
-                    elementTransforms.Add(item, SpawnElement());
+                    elementTransforms.Add(item, SpawnElement(item));
                 }
                 break;
             case NotifyCollectionChangedAction.Remove :
@@ -97,7 +100,7 @@ public class RuntimeReorderableList : UIBehaviour, IPointerEnterHandler, IPointe
                 }
                 foreach (var item in args.NewItems)
                 {
-                    elementTransforms.Add(item, SpawnElement());
+                    elementTransforms.Add(item, SpawnElement(item));
                 }
                 ReorderElementObjects();
                 break;
@@ -141,11 +144,22 @@ public class RuntimeReorderableList : UIBehaviour, IPointerEnterHandler, IPointe
         mouse_over = !eventData.hovered.Contains(gameObject);
     }
 
-    public RectTransform SpawnElement()
+    public RectTransform SpawnElement(object Item)
     { 
         var Element = Instantiate(ElementObject, ContentsPanel);
         Element.anchoredPosition = new Vector2(0,ElementObject.sizeDelta.y-ListLastPos);
+        Element.GetComponentInChildren<Text>().text = Item.ToString();
+        Element.GetComponentInChildren<ElementMover>().ListRoot = this;
         return Element;
+    }
+
+    public void DrawMoverLine(bool b, int targetIndex)
+    {
+        MoveerLine.gameObject.SetActive(b);
+        if (!b) return;
+        
+        MoveerLine.anchoredPosition = new Vector2(0, -ElementObject.sizeDelta.y * targetIndex);
+        MoveerLine.SetAsLastSibling();
     }
 
     public float GetPanelScale() => 1 - (ContentsPanel.sizeDelta.y - ((RectTransform) transform).sizeDelta.y) /  ContentsPanel.sizeDelta.y;
